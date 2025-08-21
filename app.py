@@ -1,30 +1,23 @@
+import os
 import asyncio
 import asyncssh
 import shlex
-import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
-templates = Jinja2Templates(directory="templates")
-app = FastAPI(root_path="/remotescripts")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Map users to password files
-_variable_files = {
-    "ansible": "/app/accounts-hub/variables/.file1",
-    "root": "/app/accounts-hub/variables/.file2"
-}
+app = FastAPI(root_path="/accountshub")
 
-def get_password(user: str) -> str:
-    path = _variable_files.get(user)
-    if not path or not os.path.isfile(path):
-        raise FileNotFoundError(f"Password file for user '{user}' not found")
-    with open(path, "r") as f:
-        return f.readline().strip()
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 @app.get("/")
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "root_path": app.root_path})
+
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -35,18 +28,11 @@ async def websocket_endpoint(websocket: WebSocket):
         params = json.loads(data)
 
         servers_raw = params.get("servers", "")
-        username = params.get("username")
-        action = params.get("action")  # add, delete, reset, unlock
-        target_user = params.get("target_user")
-        new_password = params.get("new_password", "")  # for reset
-
-        user = params.get("user")  # SSH user
-        try:
-            password = get_password(user)
-        except Exception as e:
-            await websocket.send_text(f"ERROR: {str(e)}")
-            await websocket.close()
-            return
+        ssh_user = params.get("ssh_user")         # SSH username
+        ssh_password = params.get("ssh_password") # SSH password
+        target_user = params.get("target_user")   # User to manage
+        action = params.get("action")             # add, delete, reset, unlock
+        new_password = params.get("new_password", "")  # For reset
 
         servers = [s.strip() for s in servers_raw.splitlines() if s.strip()]
         if not servers:
@@ -59,7 +45,10 @@ async def websocket_endpoint(websocket: WebSocket):
         for host in servers:
             await websocket.send_text(f"\n--- Processing {host} ---")
             try:
-                async with asyncssh.connect(host, username=user, password=password, known_hosts=None) as conn:
+                async with asyncssh.connect(
+                    host, username=ssh_user, password=ssh_password, known_hosts=None
+                ) as conn:
+
                     cmd = ""
                     if action == "add":
                         cmd = f"sudo useradd {shlex.quote(target_user)} && echo 'User {target_user} added.'"

@@ -1,0 +1,87 @@
+/* General body */
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+form {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Headings */
+h2 {
+    text-align: center;
+    color: #cc0000; /* Red Hat red */
+    margin-bottom: 30px;
+}
+
+/* Labels */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Inputs and textarea */
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #cc0000; /* Red Hat red */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #a30000;
+}
+
+/* Output box */
+#output {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #1d1d1d;
+    color: #fff;
+    border-radius: 8px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    form, #output {
+        width: 90%;
+        margin: 30px auto;
+    }
+}
+

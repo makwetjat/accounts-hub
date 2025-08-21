@@ -2,30 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Accounts hub UI</title>
+<title>Accounts Hub UI</title>
+<link rel="stylesheet" href="{{ root_path }}/static/styles.css">
 </head>
 <body>
+
 <h2>Remote Linux User Management</h2>
+
 <form id="userForm">
-    <label>Admin account:</label>
-    <input type="text" name="user" required><br><br>
+    <label>SSH Username:</label>
+    <input type="text" name="ssh_user" required>
+
+    <label>SSH Password:</label>
+    <input type="password" name="ssh_password" required>
 
     <label>Target User:</label>
-    <input type="text" name="target_user" required><br><br>
+    <input type="text" name="target_user" required>
 
     <label>Action:</label>
     <select name="action">
         <option value="add">Add</option>
+        <option value="delete">Delete</option>
         <option value="reset">Reset Password</option>
         <option value="unlock">Unlock</option>
-        <option value="delete">Delete</option>
-    </select><br><br>
+    </select>
 
     <label>New Password (for reset only):</label>
-    <input type="text" name="new_password"><br><br>
+    <input type="text" name="new_password">
 
-    <label>Servers (one per line):</label><br>
-    <textarea name="servers" rows="5" cols="30"></textarea><br><br>
+    <label>Servers (one per line):</label>
+    <textarea name="servers" rows="5" cols="30"></textarea>
 
     <button type="submit">Submit</button>
 </form>
@@ -40,7 +46,7 @@ form.addEventListener('submit', (e) => {
     e.preventDefault();
     output.textContent = "";
 
-    const ws = new WebSocket(`ws://${location.host}/ws`);
+    const ws = new WebSocket(`ws://${location.host}/accountshub/ws`);
     ws.onopen = () => {
         const data = Object.fromEntries(new FormData(form).entries());
         ws.send(JSON.stringify(data));
@@ -53,5 +59,7 @@ form.addEventListener('submit', (e) => {
     ws.onclose = () => output.textContent += "\nConnection closed.";
 });
 </script>
+
 </body>
 </html>
+
