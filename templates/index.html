@@ -45,8 +45,8 @@ const output = document.getElementById('output');
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     output.textContent = "";
-
-    const ws = new WebSocket(`ws://${location.host}/accountshub/ws`);
+ 
+    const ws = new WebSocket(`ws://${location.host}{{ root_path }}/ws`); 
     ws.onopen = () => {
         const data = Object.fromEntries(new FormData(form).entries());
         ws.send(JSON.stringify(data));
