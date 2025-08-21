@@ -1,0 +1,32 @@
+- When it's a first deployment - Start by creating a services file
+- 
+
+# Create a services file - /etc/systemd/system/accounts-hub.service
+
+[Unit]
+Description=UI for User Management
+After=network.target
+
+[Service]
+User=configwave
+Group=configwave
+WorkingDirectory=/app/accounts-hub
+Environment="PATH=/app/accounts-hub/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="HOME=/home/configwave"
+ExecStart=/app/accounts-hub/venv/bin/python3 -m uvicorn app:app --host 0.0.0.0 --port 8001
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+cd /app
+git clone https://github.com/makwetjat/accounts-hub.git
+cd /app/accounts-hub
+python3.11 -m venv venv       
+source venv/bin/activate 
+pip install --upgrade pip
+pip install -r requirements.txt
+
+
+systemctl restart accounts-hub.service
