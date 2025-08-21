@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Accounts hub UI</title>
+</head>
+<body>
+<h2>Remote Linux User Management</h2>
+<form id="userForm">
+    <label>SSH User:</label>
+    <input type="text" name="user" required><br><br>
+
+    <label>Target User:</label>
+    <input type="text" name="target_user" required><br><br>
+
+    <label>Action:</label>
+    <select name="action">
+        <option value="add">Add</option>
+        <option value="reset">Reset Password</option>
+        <option value="unlock">Unlock</option>
+        <option value="delete">Delete</option>
+    </select><br><br>
+
+    <label>New Password (for reset only):</label>
+    <input type="text" name="new_password"><br><br>
+
+    <label>Servers (one per line):</label><br>
+    <textarea name="servers" rows="5" cols="30"></textarea><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+
+<pre id="output"></pre>
+
+<script>
+const form = document.getElementById('userForm');
+const output = document.getElementById('output');
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    output.textContent = "";
+
+    const ws = new WebSocket(`ws://${location.host}/ws`);
+    ws.onopen = () => {
+        const data = Object.fromEntries(new FormData(form).entries());
+        ws.send(JSON.stringify(data));
+    };
+
+    ws.onmessage = (event) => {
+        output.textContent += event.data + "\n";
+    };
+
+    ws.onclose = () => output.textContent += "\nConnection closed.";
+});
+</script>
+</body>
+</html>
