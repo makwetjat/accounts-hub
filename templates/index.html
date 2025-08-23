@@ -7,7 +7,11 @@
 </head>
 <body>
 
-<h2>Remote Linux User Management</h2>
+<header>
+   <div class="container">
+      <h1>Remote Linux User Management</h1>
+    </div>
+</header>
 
 <form id="userForm">
     <label>SSH Username:</label>
@@ -31,7 +35,8 @@
     <input type="text" name="new_password">
 
     <label>Servers (one per line):</label>
-    <textarea name="servers" rows="5" cols="30"></textarea>
+    <!-- <textarea name="servers" rows="5" cols="30"></textarea> -->
+    <textarea name="servers" rows="3" placeholder="e.g. server1.example.com"></textarea>
 
     <button type="submit">Submit</button>
 </form>
@@ -45,8 +50,8 @@ const output = document.getElementById('output');
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     output.textContent = "";
- 
-    const ws = new WebSocket(`ws://${location.host}{{ root_path }}/ws`); 
+
+    const ws = new WebSocket(`ws://${location.host}{{ root_path }}/ws`);
     ws.onopen = () => {
         const data = Object.fromEntries(new FormData(form).entries());
         ws.send(JSON.stringify(data));
@@ -61,5 +66,9 @@ form.addEventListener('submit', (e) => {
 </script>
 
 </body>
+<footer>
+   <div class="container">
+      © 2025 Makwetja Thoka (Work In Progress)
+   </div>
+</footer>
 </html>
-
